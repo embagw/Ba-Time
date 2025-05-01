@@ -59,9 +59,24 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+    implementation (libs.androidx.navigation.compose)
+//room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+// DataStore (Preferences)
+    implementation(libs.androidx.datastore.preferences)
+
+
+// Hilt
+    implementation (libs.hilt.android)
+    ksp (libs.hilt.compiler)
+
+    // ViewModel + Coroutines
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+
+
 //live data
     implementation(libs.androidx.lifecycle.livedata.ktx)
     // convertor
