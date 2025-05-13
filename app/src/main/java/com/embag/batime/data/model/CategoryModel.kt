@@ -1,3 +1,3 @@
 package com.embag.batime.data.model
 
-data class CategoryModel()
+//data class CategoryModel()

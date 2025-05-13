@@ -18,3 +18,4 @@ class TaskViewModel @Inject constructor(private val repo: TaskRepository) : View
     init { viewModelScope.launch { repo.getAll().collect { _tasks.value = it } } }
     fun add(task: Task) = viewModelScope.launch { repo.add(task) }
 }
+
