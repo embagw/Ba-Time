@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.embag.batime.data.local.*
 import com.embag.batime.data.repository.CategoryRepository
 import com.embag.batime.data.repository.CategoryRepositoryImpl
+import com.embag.batime.data.repository.TaskRepository
+import com.embag.batime.data.repository.TaskRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,8 +24,10 @@ object DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "todo_db"
-        ).build()
+            "batime_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Singleton
@@ -33,6 +37,12 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideTaskDao(db: AppDatabase): TaskDao = db.taskDao()
+
+    @Singleton
+    @Provides
+    fun provideTaskRepo(dao: TaskDao): TaskRepository = TaskRepositoryImpl(dao)
+
+
 
     @Singleton
     @Provides
@@ -55,5 +65,7 @@ object DatabaseModule {
     fun provideCategoryRepository(dao: CategoryDao): CategoryRepository {
         return CategoryRepositoryImpl(dao)
     }
+
+
 }
 

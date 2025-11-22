@@ -6,22 +6,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.embag.batime.data.local.Task
 import presentation.ViewModel.TaskViewModel
 
 
 @Composable
-fun AddTaskScreen(
+fun AddEditTaskScreen(
     navController: NavController,
+    taskId: Int? = null,              // اگر null باشد یعنی «افزودن»
+    categoryId: Int,                  // دسته‌بندی جاری
     vm: TaskViewModel = hiltViewModel()
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    // ۱. بارگذاری لیست یا تک تسک بر اساس taskId
+    val tasks by vm.tasks.collectAsState()
+    val existing = taskId?.let { id -> tasks.find { it.id == id } }
+
+    var title by remember { mutableStateOf(existing?.title ?: "") }
+    var description by remember { mutableStateOf(existing?.description ?: "") }
 
     Column(Modifier.padding(16.dp)) {
-        Text("افزودن وظیفه جدید", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            if (existing == null) "افزودن وظیفه جدید" else "ویرایش وظیفه",
+            style = MaterialTheme.typography.headlineSmall
+        )
 
         OutlinedTextField(
             value = title,
@@ -40,18 +48,21 @@ fun AddTaskScreen(
                 .padding(vertical = 8.dp)
         )
 
+        Spacer(Modifier.height(16.dp))
+
         Button(onClick = {
-            val newTask = Task(
+            val t = Task(
+                id = existing?.id ?: 0,
                 title = title,
                 description = description,
-                priority = 0,
-                dueDate = null,
-                categoryId = 1
+                priority = existing?.priority ?: 0,
+                dueDate = existing?.dueDate,
+                categoryId = categoryId
             )
-            vm.add(newTask)
-            navController.popBackStack() // بازگشت به صفحه قبل
+            if (existing == null) vm.add(t) else vm.update(t)
+            navController.popBackStack()
         }) {
-            Text("ذخیره")
+            Text(if (existing == null) "ذخیره" else "بروزرسانی")
         }
     }
 }
